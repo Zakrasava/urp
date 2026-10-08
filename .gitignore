@@ -1,0 +1,5 @@
+.worktrees/
+.review-packet/
+apps-script/.clasp.json
+qa-artifacts/
+__pycache__/
