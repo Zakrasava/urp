@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Уточнения кадровой службы для подготовки разделов корпоративного портала.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Кадровый портал — уточнения УРП</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="config.js"></script>
+  <script defer src="questions.js"></script>
+  <script defer src="core.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <a class="skip" href="#survey">Перейти к вопросам</a>
+  <main class="page">
+    <header class="hero">
+      <p class="hero-kicker">Управление персоналом · уточнения</p>
+      <h1 class="title">Кадровый портал.<br>Договоримся о деталях</h1>
+      <p class="sub">Изучили ваши материалы и макеты. Осталось уточнить правила, ответственность и наполнение — чтобы перейти к реализации.</p>
+      <div class="hero-meta"><span>23 вопроса</span><span>5 разделов</span><span>Можно заполнить частями</span></div>
+    </header>
+    <noscript><p class="notice">Для заполнения и сохранения ответов включите JavaScript в браузере.</p></noscript>
+    <details class="accepted card">
+      <summary>Что уже принято — повторно согласовывать не нужно</summary>
+      <ul id="accepted-list"></ul>
+    </details>
+    <section class="instructions card" aria-labelledby="how-title">
+      <h2 id="how-title" class="card-title">Как заполнить</h2>
+      <p>Для каждого вопроса выберите статус и напишите ответ. Если решение ещё обсуждается или вопрос относится к другому подразделению, укажите это и по возможности назовите ответственного.</p>
+      <p>Рядом есть пояснения, пример ответа и исходный документ. Примеры помогают понять, как ответить. Они не являются согласованными решениями.</p>
+      <p class="small">ЛНА — локальные нормативные акты, ПД — персональные данные. Указывайте правила, должности и ссылки. Не прикладывайте сведения о конкретных работниках, сканы заявлений и другие персональные документы. Ответы получит организатор в отдельной Google-таблице; на этой странице они не публикуются.</p>
+    </section>
+    <div class="progress-card">
+      <div class="progress-label"><span class="counter" id="counter">Отмечено 0 из 23</span><span id="draft-state" class="small" role="status">Черновик сохраняется в этом браузере</span></div>
+      <progress id="progress" max="23" value="0" aria-label="Заполненные вопросы"></progress>
+      <nav id="section-nav" aria-label="Разделы опроса"></nav>
+    </div>
+    <form id="survey" class="form" novalidate>
+      <section class="block respondent" aria-labelledby="respondent-title">
+        <h2 id="respondent-title" class="block-title">Кто заполняет</h2>
+        <div class="two-col">
+          <div><label for="team">Подразделение <span aria-hidden="true">*</span></label><input id="team" name="team" type="text" maxlength="180" required autocomplete="organization" placeholder="Например, УРП"><p class="field-error" id="team-error"></p></div>
+          <div><label for="role">Должность / роль <span aria-hidden="true">*</span></label><input id="role" name="role" type="text" maxlength="180" required autocomplete="organization-title" placeholder="Например, специалист по кадрам"><p class="field-error" id="role-error"></p></div>
+        </div>
+        <label for="contact">Рабочий контакт для уточнений <span class="small">— необязательно</span></label><input id="contact" name="contact" type="text" maxlength="200" placeholder="Рабочая почта или внутренний добавочный номер"><p class="field-error" id="contact-error"></p><p class="small">Достаточно подразделения и роли; ФИО не требуется.</p>
+      </section>
+      <div id="questions"></div>
+      <section class="block" aria-labelledby="comments-title">
+        <h2 id="comments-title" class="block-title">Что ещё нужно учесть?</h2>
+        <label for="comments">Дополнительные замечания <span class="small">— необязательно</span></label><textarea id="comments" maxlength="5000" placeholder="Если в наших вопросах чего-то не хватает, напишите здесь."></textarea><p class="field-error" id="comments-error"></p>
+      </section>
+      <div class="trap" aria-hidden="true"><label for="website">Оставьте это поле пустым</label><input id="website" tabindex="-1" autocomplete="off"></div>
+      <section class="submit-card">
+        <div id="validation-summary" class="panel error" role="alert" tabindex="-1" hidden></div>
+        <button id="send" class="btn primary" type="submit">Отправить ответы</button>
+        <p class="submit-hint">Выберите статус для каждого вопроса. Если выбрано «Решение известно», напишите ответ. Для остальных статусов пояснение необязательно.</p>
+        <div id="send-error" class="panel error" role="alert" tabindex="-1" hidden>
+          <h2 class="panel-title">Не удалось подтвердить сохранение</h2><p id="send-error-text"></p>
+          <p>Ответы остаются в форме. Повтор с теми же ответами не создаёт дубликат. Если изменить ответы, они сохранятся как новая версия.</p>
+          <button id="retry" type="button" class="btn secondary">Повторить отправку</button>
+        </div>
+        <div class="form-actions"><button id="copy-answers" type="button" class="btn secondary">Скопировать мои ответы</button><button id="clear-draft" type="button" class="btn link">Очистить черновик</button></div>
+        <div id="clear-confirm" class="panel" hidden><p>Удалить черновик этого опроса из браузера?</p><div class="actions"><button id="clear-yes" type="button" class="btn secondary">Да, очистить</button><button id="clear-no" type="button" class="btn secondary">Оставить</button></div></div>
+        <div id="copy-fallback" class="panel" hidden><label for="copy-text">Выделите и скопируйте текст вручную</label><textarea id="copy-text" readonly></textarea></div>
+        <p id="action-status" class="small" role="status"></p>
+      </section>
+    </form>
+    <section id="success" class="card success" aria-labelledby="success-title" tabindex="-1" hidden>
+      <p class="hero-kicker">Ответы сохранены</p><h2 id="success-title" class="card-title">Спасибо. Уточнения получены</h2>
+      <p>Ответы записаны в таблицу организатора. Они помогут завершить требования и приступить к реализации кадрового портала.</p>
+      <p id="receipt" class="small"></p><button id="new-response" type="button" class="btn secondary">Заполнить ещё раз</button>
+    </section>
+    <footer class="footer"><p>Опрос по материалам УРП · октябрь 2026</p><p>Документы открываются из корпоративной сети. Если ссылка не сработала, скопируйте путь и вставьте его в адресную строку Проводника Windows. На телефоне исходные файлы доступны через корпоративное приложение для файлов, если оно настроено.</p></footer>
+  </main>
+</body>
+</html>
