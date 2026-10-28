@@ -7,17 +7,28 @@ const sandbox={window:{}};
 vm.runInNewContext(fs.readFileSync(require.resolve('../questions.js'),'utf8'),sandbox);
 const data=sandbox.window.HR_SURVEY_DATA,list=C.questions(data);
 function valid(){const s=C.normalize({},list);s.respondent={team:'УРП',role:'Кадровик',contact:''};list.forEach(q=>s.answers[q.id]={status:'pending',text:'',link:''});return s;}
-test('all 23 unique questions in five groups retain source references and examples',()=>{
- assert.equal(data.sections.length,5);assert.equal(list.length,23);assert.equal(new Set(list.map(q=>q.id)).size,23);
- for(const q of list){assert.ok(q.example.length>60);assert.ok(q.requested);assert.ok(q.reference);assert.ok(q.documents.length);for(const id of q.documents){assert.ok(data.documents[id]);assert.ok(C.fileUrl(data.documents[id].path).startsWith('file://isreg.ru/'));}}
- assert.ok(C.key.startsWith('hr-portal-survey:'));assert.ok(!C.key.includes('survey-draft-v3'));
+test('round 2: 18 unique questions R01-R18 in five sections with intro and accepted decisions',()=>{
+ assert.equal(data.round,2);assert.equal(data.sections.length,5);assert.equal(list.length,18);
+ assert.deepEqual(list.map(q=>q.id),Array.from({length:18},(_,i)=>'R'+String(i+1).padStart(2,'0')));
+ assert.equal(data.intro.length,2);assert.equal(data.accepted.length,8);
+ for(const s of data.sections){assert.ok(s.nav);assert.ok(s.title);assert.ok(s.questions.length);}
+ for(const q of list){assert.equal(q.code,q.id);assert.ok(q.title);assert.ok(q.question.endsWith('?'),q.id);assert.ok(q.details.length,q.id);
+  for(const d of q.details){assert.ok(d.label);assert.ok(d.text?d.text.length>10:d.items.length>=3,q.id);}
+  assert.ok(!('documents' in q),q.id);}
+ const all=JSON.stringify(data);for(const placeholder of ['[ПЗГД]','[кто]','[публикатор главной]'])assert.ok(all.includes(placeholder),placeholder);
+ assert.ok(!/isreg|\\\\/.test(all));
+ assert.equal(C.key,'hr-portal-survey:draft:v2');assert.ok(!C.key.includes('survey-draft-v3'));
+});
+test('a round 1 draft is not applied to round 2 questions',()=>{
+ const old=C.draft(JSON.stringify({respondent:{team:'УРП',role:'x',contact:''},answers:{K01:{status:'ready',text:'Старый ответ',link:''}},comments:''}),list);
+ assert.ok(!('K01' in old.answers));assert.deepEqual(Object.keys(old.answers),list.map(q=>q.id));
 });
 test('known decisions require detail, uncertainty and delegation do not invent answers',()=>{
  const s=valid();assert.deepEqual(C.validate(s,list),{});
- s.answers.K01.status='ready';assert.ok(C.validate(s,list)['K01-text']);assert.equal(C.answerComplete(s.answers.K01),false);
- s.answers.K01.text='Согласованный порядок';assert.equal(C.answerComplete(s.answers.K01),true);
- s.answers.K02.status='delegate';assert.equal(C.answerComplete(s.answers.K02),true);
- s.answers.K03.status='bogus';assert.ok(C.validate(s,list)['K03-status']);
+ s.answers.R01.status='ready';assert.ok(C.validate(s,list)['R01-text']);assert.equal(C.answerComplete(s.answers.R01),false);
+ s.answers.R01.text='Согласованный порядок';assert.equal(C.answerComplete(s.answers.R01),true);
+ s.answers.R02.status='delegate';assert.equal(C.answerComplete(s.answers.R02),true);
+ s.answers.R03.status='bogus';assert.ok(C.validate(s,list)['R03-status']);
  s.respondent.team=' ';assert.ok(C.validate(s,list).team);
 });
 test('only document URLs and network paths accepted',()=>{
@@ -26,9 +37,9 @@ test('only document URLs and network paths accepted',()=>{
  assert.match(C.fileUrl('\\\\server\\share\\Файл №1.pdf'),/^file:\/\/server\/share\/%/);
 });
 test('malformed and foreign draft data does not break restoration',()=>{
- const s=C.draft('{malformed',list);assert.equal(s.answers.K01.status,'');
+ const s=C.draft('{malformed',list);assert.equal(s.answers.R01.status,'');
  assert.equal(C.draft('null',list).respondent.team,'');
- assert.equal(C.draft('{"answers":{"K01":{"status":"__proto__"}}}',list).answers.K01.status,'');
+ assert.equal(C.draft('{"answers":{"R01":{"status":"__proto__"}}}',list).answers.R01.status,'');
  assert.equal(C.normalize({respondent:{team:'x'.repeat(999)}},list).respondent.team.length,180);
  assert.equal(C.normalize({submissionId:'-'.repeat(36)},list).submissionId,'');
 });
@@ -47,9 +58,9 @@ test('retry and edit-undo keep the same ID; a changed revision gets a new ID aft
  const first=C.prepareAttempt(valid(),cryptoApi);
  assert.equal(C.prepareAttempt(first,cryptoApi).submissionId,first.submissionId);
  const restored=C.draft(JSON.stringify(first),list);
- restored.answers.K01.text='Temporary edit';restored.answers.K01.text='';
+ restored.answers.R01.text='Temporary edit';restored.answers.R01.text='';
  assert.equal(C.prepareAttempt(restored,cryptoApi).submissionId,first.submissionId);
- restored.answers.K01.text='New decision';
+ restored.answers.R01.text='New decision';
  assert.notEqual(C.prepareAttempt(restored,cryptoApi).submissionId,first.submissionId);
  assert.equal(C.payload(first,'old').submissionId,C.payload(first,'new').submissionId);
 });
@@ -59,6 +70,6 @@ test('permanent receiver errors give a recovery path and text NULs are rejected'
  assert.match(C.failureMessage({error:'BUSY'}),/Повторите/);
  for(const code of ['SAVE_FAILED','ID_CONFLICT'])assert.match(C.failureMessage({error:code}),/Скопируйте|скопируйте/);
  for(const response of [null,undefined,{error:'unknown'},{error:'__proto__'}])assert.match(C.failureMessage(response),/не подтвердил/);
- const s=valid();s.answers.K01.text='bad\x00text';assert.ok(C.validate(s,list)['K01-text']);
- assert.equal(C.normalize({answers:{K01:{status:['ready']}}},list).answers.K01.status,'');
+ const s=valid();s.answers.R01.text='bad\x00text';assert.ok(C.validate(s,list)['R01-text']);
+ assert.equal(C.normalize({answers:{R01:{status:['ready']}}},list).answers.R01.status,'');
 });

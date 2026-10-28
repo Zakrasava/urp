@@ -10,28 +10,23 @@
     if (target) target.textContent = message || "";
     input.setAttribute("aria-invalid", message ? "true" : "false");
   }
-  function source(doc) {
-    var row = el("div", "source-row");
-    var link = el("a", "source-link", doc.title); link.href = C.fileUrl(doc.path); link.title = doc.file; row.append(link);
-    var button = el("button", "source-copy", "Копировать путь"); button.type = "button";
-    button.setAttribute("aria-label", "Копировать путь: " + doc.title);
-    button.addEventListener("click", function () { copy(doc.path, button); }); row.append(button);
-    return row;
-  }
+  DATA.intro.forEach(function (text) { byId("intro").append(el("p", "", text)); });
   DATA.accepted.forEach(function (text) { byId("accepted-list").append(el("li", "", text)); });
   DATA.sections.forEach(function (section, i) {
-    var nav = el("a", "", (i + 1) + ". " + ["Публикации", "ЛНА", "Заявления", "Справочник", "Материалы"][i]); nav.href = "#" + section.id; byId("section-nav").append(nav);
+    var nav = el("a", "", (i + 1) + ". " + section.nav); nav.href = "#" + section.id; byId("section-nav").append(nav);
     var block = el("section", "block section"); block.id = section.id; block.setAttribute("aria-labelledby", section.id + "-title");
-    var title = el("h2", "block-title", section.title); title.id = section.id + "-title"; block.append(title, el("p", "section-description", section.description));
+    var title = el("h2", "block-title", section.title); title.id = section.id + "-title"; block.append(title); if (section.description) block.append(el("p", "section-description", section.description));
     section.questions.forEach(function (q) {
       var field = el("fieldset", "q"); field.id = q.id;
       var legend = el("legend", "q-label"); legend.append(el("span", "q-num", q.code), el("span", "", q.title)); field.append(legend);
-      var body = el("div", "q-body"); var description = el("p", "question-text", q.body); description.id = q.id + "-description"; body.append(description);
-      var guidance = el("p", "guidance"); guidance.append(el("strong", "", "Что указать: "), document.createTextNode(q.requested)); body.append(guidance);
-      var example = el("details", "example"); example.append(el("summary", "", "Посмотреть пример ответа"), el("p", "", q.example)); body.append(example);
-      var materials = el("details", "sources"); materials.append(el("summary", "", "Исходные документы и основание"), el("p", "source-reference", q.reference));
-      q.documents.forEach(function (id) { materials.append(source(DATA.documents[id])); });
-      materials.append(el("p", "small", "Ссылка доступна в корпоративной сети. Если не открылась, скопируйте путь и вставьте его в адресную строку Проводника Windows.")); body.append(materials);
+      var body = el("div", "q-body"); var description = el("p", "question-text", q.question); description.id = q.id + "-description"; body.append(description);
+      q.details.forEach(function (d) {
+        var detail = el("div", "guidance");
+        if (d.items) { detail.append(el("strong", "", d.label + ":")); var options = el("ol", "q-options"); d.items.forEach(function (item) { options.append(el("li", "", item)); }); detail.append(options); }
+        else detail.append(el("strong", "", d.label + ". "), document.createTextNode(d.text || ""));
+        body.append(detail);
+      });
+      if (q.requested) { var guidance = el("p", "guidance"); guidance.append(el("strong", "", "Что нужно: "), document.createTextNode(q.requested)); body.append(guidance); }
       var statusLabel = el("label", "", "Статус вопроса *"); statusLabel.htmlFor = q.id + "-status";
       var select = el("select"); select.id = q.id + "-status"; select.required = true;
       var placeholder = el("option", "", "Выберите статус"); placeholder.value = ""; select.append(placeholder);
@@ -39,7 +34,7 @@
       var statusError = el("p", "field-error"); statusError.id = select.id + "-error"; select.setAttribute("aria-describedby", statusError.id);
       var label = el("label", "", "Ответ или пояснение"); label.htmlFor = q.id + "-text";
       var textarea = el("textarea"); textarea.id = q.id + "-text"; textarea.maxLength = 5000;
-      textarea.placeholder = "Опишите правило, ответственных и исключения. Если решения нет — напишите, что нужно уточнить и у кого.";
+      textarea.placeholder = "Если подходит наше предложение, напишите «Согласны». Иначе опишите своё решение; если решения нет — что нужно уточнить и у кого.";
       var textError = el("p", "field-error"); textError.id = textarea.id + "-error"; textarea.setAttribute("aria-describedby", q.id + "-description " + textError.id);
       var linkLabel = el("label", "optional-label", "Ссылка или сетевой путь к материалу — необязательно"); linkLabel.htmlFor = q.id + "-link";
       var input = el("input"); input.type = "text"; input.id = q.id + "-link"; input.maxLength = 1500; input.placeholder = String.raw`https://… или \\сервер\папка\файл`;
@@ -62,7 +57,7 @@
   }
   function progress() {
     var count = list.filter(function (q) { return C.answerComplete(state.answers[q.id]); }).length;
-    byId("counter").textContent = "Отмечено " + count + " из " + list.length; byId("progress").value = count;
+    byId("counter").textContent = "Отмечено " + count + " из " + list.length; byId("progress").max = list.length; byId("progress").value = count;
     list.forEach(function (q) { byId(q.id + "-text").required = state.answers[q.id].status === "ready"; });
   }
   function save() {

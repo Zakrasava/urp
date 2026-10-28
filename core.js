@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
   var statuses = { ready: "Решение известно", pending: "Нужно уточнить", delegate: "Другое подразделение" };
-  var key = "hr-portal-survey:draft:v1";
+  var key = "hr-portal-survey:draft:v2";
   var maxPayloadLength = 350000;
   function knownStatus(value) { return typeof value === "string" && Object.prototype.hasOwnProperty.call(statuses, value); }
   function str(value) { return typeof value === "string" ? value.trim() : ""; }
@@ -89,7 +89,7 @@
   }
   function confirmed(result, id) { return !!result && result.ok === true && result.service === "hr-portal-survey" && result.submissionId === id; }
   function summary(state, list) {
-    var lines = ["Уточнения УРП", "Подразделение: " + state.respondent.team, "Роль: " + state.respondent.role, "Контакт: " + state.respondent.contact, ""];
+    var lines = ["Уточнения УРП — второй круг", "Подразделение: " + state.respondent.team, "Роль: " + state.respondent.role, "Контакт: " + state.respondent.contact, ""];
     list.forEach(function (q) { var a = state.answers[q.id]; lines.push(q.code + ". " + q.title, "Статус: " + (statuses[a.status] || "Не выбран"), a.text || "Без пояснения", a.link ? "Материал: " + a.link : "", ""); });
     lines.push("Дополнительно: " + state.comments);
     return lines.join("\n");
