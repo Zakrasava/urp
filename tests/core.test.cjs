@@ -15,8 +15,8 @@ test('round 2: 18 unique questions R01-R18 in five sections with intro and accep
  for(const q of list){assert.equal(q.code,q.id);assert.ok(q.title);assert.ok(q.question.endsWith('?'),q.id);assert.ok(q.details.length,q.id);
   for(const d of q.details){assert.ok(d.label);assert.ok(d.text?d.text.length>10:d.items.length>=3,q.id);}
   assert.ok(!('documents' in q),q.id);}
- const all=JSON.stringify(data);for(const placeholder of ['[ПЗГД]','[кто]','[публикатор главной]'])assert.ok(all.includes(placeholder),placeholder);
- assert.ok(!/isreg|\\\\/.test(all));
+ const all=JSON.stringify(data);for(const placeholder of ['[ПЗГД]','[должность]','[публикатор главной]'])assert.ok(all.includes(placeholder),placeholder);
+ assert.ok(!/isreg|\\\\/.test(all));assert.ok(!/ФИО/.test(JSON.stringify(data.sections).replace('ФИО в этой форме не указывайте','')));assert.ok(!all.includes('A-04'));
  assert.equal(C.key,'hr-portal-survey:draft:v2');assert.ok(!C.key.includes('survey-draft-v3'));
 });
 test('a round 1 draft is not applied to round 2 questions',()=>{

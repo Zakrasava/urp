@@ -40,7 +40,7 @@ with sync_playwright() as p:
     asset_page.goto(BASE, wait_until='networkidle')
     assert asset_page.locator('fieldset.q').count() == 18
     actual_config = asset_page.evaluate('window.HR_SURVEY_CONFIG')
-    assert actual_config['version'] == '2026-10-28.1'
+    assert actual_config['version'] == '2026-10-28.2'
     assert actual_config['endpoint'] == 'https://script.google.com/macros/s/AKfycbxMp6EmMyiqF1OeQ3t-kLe67KLDy4vrDfgbfIgox9F7V0xjHF-Urmefc2vSuuGxEJdd/exec'
     assert not asset_errors, asset_errors
     asset_page.close()
