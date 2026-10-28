@@ -272,6 +272,10 @@ label { display: block; margin: 16px 0 8px; font-size: 15px; font-weight: 600; }
 .question-text { margin: 0 0 12px; font-size: 16px; }
 .guidance { margin: 0 0 12px; }
 .guidance strong { color: var(--ink); }
+.q-options { margin: 6px 0 0; padding-left: 22px; }
+.q-options li + li { margin-top: 4px; }
+.intro p { margin: 0 0 12px; }
+.intro p:last-child { margin-bottom: 0; }
 .example, .sources { margin: 0 0 10px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 8px 14px; background: rgba(0,0,0,.12); font-size: 14px; }
 .example summary { color: var(--accent); }
 .example p, .sources p { margin: 12px 0 8px; color: var(--ink-2); }

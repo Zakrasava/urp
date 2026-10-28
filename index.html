@@ -11,36 +11,36 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="config.js"></script>
-  <script defer src="questions.js"></script>
-  <script defer src="core.js"></script>
-  <script defer src="app.js"></script>
+  <link rel="stylesheet" href="styles.css?v=2026-10-28.1">
+  <script defer src="config.js?v=2026-10-28.1"></script>
+  <script defer src="questions.js?v=2026-10-28.1"></script>
+  <script defer src="core.js?v=2026-10-28.1"></script>
+  <script defer src="app.js?v=2026-10-28.1"></script>
 </head>
 <body>
   <div class="bg" aria-hidden="true"></div>
   <a class="skip" href="#survey">Перейти к вопросам</a>
   <main class="page">
     <header class="hero">
-      <p class="hero-kicker">Управление персоналом · уточнения</p>
+      <p class="hero-kicker">Управление персоналом · второй круг</p>
       <h1 class="title">Кадровый портал.<br>Договоримся о деталях</h1>
-      <p class="sub">Изучили ваши материалы и макеты. Осталось уточнить правила, ответственность и наполнение — чтобы перейти к реализации.</p>
-      <div class="hero-meta"><span>23 вопроса</span><span>5 разделов</span><span>Можно заполнить частями</span></div>
+      <div class="sub intro" id="intro"></div>
+      <div class="hero-meta"><span>18 вопросов</span><span>5 разделов</span><span>Можно заполнить частями</span></div>
     </header>
     <noscript><p class="notice">Для заполнения и сохранения ответов включите JavaScript в браузере.</p></noscript>
     <details class="accepted card">
-      <summary>Что уже принято — повторно согласовывать не нужно</summary>
+      <summary>Что уже принято по вашим ответам — повторно согласовывать не нужно</summary>
       <ul id="accepted-list"></ul>
     </details>
     <section class="instructions card" aria-labelledby="how-title">
       <h2 id="how-title" class="card-title">Как заполнить</h2>
-      <p>Для каждого вопроса выберите статус и напишите ответ. Если решение ещё обсуждается или вопрос относится к другому подразделению, укажите это и по возможности назовите ответственного.</p>
-      <p>Рядом есть пояснения, пример ответа и исходный документ. Примеры помогают понять, как ответить. Они не являются согласованными решениями.</p>
-      <p class="small">ЛНА — локальные нормативные акты, ПД — персональные данные. Указывайте правила, должности и ссылки. Не прикладывайте сведения о конкретных работниках, сканы заявлений и другие персональные документы. Ответы получит организатор в отдельной Google-таблице; на этой странице они не публикуются.</p>
+      <p>Для каждого вопроса выберите статус. Если ответ совпадает с нашим предложением, выберите «Решение известно» и напишите «Согласны»; если нет — опишите своё решение. Если решение ещё обсуждается или вопрос относится к другому подразделению, укажите это и по возможности назовите ответственного.</p>
+      <p>Квадратные скобки в тексте, например [ПЗГД], отмечают то, что нужно уточнить в ответе.</p>
+      <p class="small">ЛНА — локальные нормативные акты, ПД — персональные данные. Указывайте правила, должности и ссылки; ФИО — только там, где об этом прямо спрашивает вопрос. Не прикладывайте сканы заявлений и другие персональные документы. Ответы получит организатор в отдельной Google-таблице; на этой странице они не публикуются.</p>
     </section>
     <div class="progress-card">
-      <div class="progress-label"><span class="counter" id="counter">Отмечено 0 из 23</span><span id="draft-state" class="small" role="status">Черновик сохраняется в этом браузере</span></div>
-      <progress id="progress" max="23" value="0" aria-label="Заполненные вопросы"></progress>
+      <div class="progress-label"><span class="counter" id="counter">Отмечено 0 из 18</span><span id="draft-state" class="small" role="status">Черновик сохраняется в этом браузере</span></div>
+      <progress id="progress" max="18" value="0" aria-label="Заполненные вопросы"></progress>
       <nav id="section-nav" aria-label="Разделы опроса"></nav>
     </div>
     <form id="survey" class="form" novalidate>
@@ -78,7 +78,7 @@
       <p>Ответы записаны в таблицу организатора. Они помогут завершить требования и приступить к реализации кадрового портала.</p>
       <p id="receipt" class="small"></p><button id="new-response" type="button" class="btn secondary">Заполнить ещё раз</button>
     </section>
-    <footer class="footer"><p>Опрос по материалам УРП · октябрь 2026</p><p>Документы открываются из корпоративной сети. Если ссылка не сработала, скопируйте путь и вставьте его в адресную строку Проводника Windows. На телефоне исходные файлы доступны через корпоративное приложение для файлов, если оно настроено.</p></footer>
+    <footer class="footer"><p>Опрос по материалам УРП · второй круг · октябрь 2026</p><p>Ответы первого круга получены и в эту форму не подставляются. Черновик второго круга сохраняется только в этом браузере.</p></footer>
   </main>
 </body>
 </html>

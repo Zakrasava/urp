@@ -31,7 +31,7 @@ with zipfile.ZipFile(io.BytesIO(xlsx)) as archive:
     if cell.get('t')=='s':text=shared[int(text)]
     values[re.sub(r'[0-9]+','',cell.get('r',''))]=text
    if values.get('A')==args.test_id:matches.append(values);formula_rows.append(bool(row.findall('s:c/s:f',ns)))
-print(json.dumps({'test_rows_with_id':len(matches),'test_marker_verified':bool(matches and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ')),'checksum_present':bool(matches and matches[0].get('BY'))}))
-assert len(matches)==1 and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ') and matches[0].get('BY')
+print(json.dumps({'test_rows_with_id':len(matches),'test_marker_verified':bool(matches and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ')),'checksum_present':bool(matches and matches[0].get('BJ'))}))
+assert len(matches)==1 and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ') and matches[0].get('BJ')
 print(json.dumps({'test_row_has_formulas':any(formula_rows),'formula_examples_stored_as_text':all(expected in matches[0].get(col,'') for col,expected in [('K','=1+1'),('N','@test'),('Q','-item'),('T','+7-test')])}))
 assert not any(formula_rows)

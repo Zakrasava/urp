@@ -1,8 +1,9 @@
-// Independent receiver for the /hr/ survey. Never uses the training survey sheet.
+// Independent receiver for the HR (URP) survey, round 2. Never uses the training survey sheet.
+// Round 1 (K01-K23) is closed: its sheet is never opened or changed; round 2 writes to its own sheet.
 var HR_SERVICE = 'hr-portal-survey';
 var HR_SHEET_ID = '1PRnjDo_LXdpiYtTd0OvUgVUMe2aDYyPb_MW5mr_gVyc';
-var HR_SHEET_NAME = 'Ответы УРП';
-var HR_QUESTION_IDS = Array.from({length: 23}, function (_, i) { return 'K' + ('0' + (i + 1)).slice(-2); });
+var HR_SHEET_NAME = 'Ответы УРП — круг 2';
+var HR_QUESTION_IDS = Array.from({length: 18}, function (_, i) { return 'R' + ('0' + (i + 1)).slice(-2); });
 var HR_STATUS_LABELS = {ready: 'Решение известно', pending: 'Нужно уточнить', delegate: 'Другое подразделение'};
 var HR_HEADERS = ['ID ответа', 'Получено (UTC)', 'Версия формы', 'Подразделение', 'Должность / роль', 'Рабочий контакт'];
 HR_QUESTION_IDS.forEach(function (id) {
@@ -11,7 +12,7 @@ HR_QUESTION_IDS.forEach(function (id) {
 HR_HEADERS.push('Дополнительные замечания', 'Контрольная сумма');
 
 function doGet() {
-  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-10-08.1'});
+  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-10-28.1'});
 }
 
 function doPost(e) {
