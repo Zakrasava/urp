@@ -5,7 +5,15 @@ import argparse, io, json, os, re, urllib.parse, urllib.request, zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-SHEET_ID=re.search(r"HR_SHEET_ID = '([^']+)'",(ROOT/'apps-script/Code.gs').read_text(encoding='utf-8')).group(1)
+CODE=(ROOT/'apps-script/Code.gs').read_text(encoding='utf-8')
+SHEET_ID=re.search(r"HR_SHEET_ID = '([^']+)'",CODE).group(1)
+# The checksum is the last header column: 6 respondent columns, 3 per question, comments, checksum.
+QUESTIONS=int(re.search(r'HR_QUESTION_IDS = Array\.from\(\{length: ([0-9]+)\}',CODE).group(1))
+def column(n):
+ s=''
+ while n:n,r=divmod(n-1,26);s=chr(65+r)+s
+ return s
+CHECKSUM=column(6+QUESTIONS*3+2)
 parser=argparse.ArgumentParser(); parser.add_argument('--test-id',required=True); args=parser.parse_args()
 c=json.loads((Path(os.environ['USERPROFILE'])/'.clasprc.json').read_text(encoding='utf-8'))['tokens']['default']
 data=urllib.parse.urlencode({k:c[k] for k in ('client_id','client_secret','refresh_token')}|{'grant_type':'refresh_token'}).encode()
@@ -31,7 +39,7 @@ with zipfile.ZipFile(io.BytesIO(xlsx)) as archive:
     if cell.get('t')=='s':text=shared[int(text)]
     values[re.sub(r'[0-9]+','',cell.get('r',''))]=text
    if values.get('A')==args.test_id:matches.append(values);formula_rows.append(bool(row.findall('s:c/s:f',ns)))
-print(json.dumps({'test_rows_with_id':len(matches),'test_marker_verified':bool(matches and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ')),'checksum_present':bool(matches and matches[0].get('BJ'))}))
-assert len(matches)==1 and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ') and matches[0].get('BJ')
+print(json.dumps({'test_rows_with_id':len(matches),'test_marker_verified':bool(matches and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ')),'checksum_present':bool(matches and matches[0].get(CHECKSUM))}))
+assert len(matches)==1 and matches[0].get('D','').startswith('ТЕСТОВАЯ ЗАПИСЬ') and matches[0].get(CHECKSUM)
 print(json.dumps({'test_row_has_formulas':any(formula_rows),'formula_examples_stored_as_text':all(expected in matches[0].get(col,'') for col,expected in [('K','=1+1'),('N','@test'),('Q','-item'),('T','+7-test')])}))
 assert not any(formula_rows)
