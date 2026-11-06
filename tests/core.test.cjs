@@ -7,10 +7,10 @@ const sandbox={window:{}};
 vm.runInNewContext(fs.readFileSync(require.resolve('../questions.js'),'utf8'),sandbox);
 const data=sandbox.window.HR_SURVEY_DATA,list=C.questions(data);
 function valid(){const s=C.normalize({},list);s.respondent={team:'УРП',role:'Кадровик',contact:''};list.forEach(q=>s.answers[q.id]={status:'pending',text:'',link:''});return s;}
-test('round 2 full edition: 36 unique questions R01-R36 in eight sections with intro and accepted decisions',()=>{
- assert.equal(data.round,2);assert.equal(data.sections.length,8);assert.equal(list.length,36);
- assert.deepEqual(list.map(q=>q.id),Array.from({length:36},(_,i)=>'R'+String(i+1).padStart(2,'0')));
- assert.equal(data.intro.length,2);assert.equal(data.accepted.length,10);
+test('round 2 full edition: 41 unique questions R01-R41 in nine sections with intro and accepted decisions',()=>{
+ assert.equal(data.round,2);assert.equal(data.sections.length,9);assert.equal(list.length,41);
+ assert.deepEqual(list.map(q=>q.id),Array.from({length:41},(_,i)=>'R'+String(i+1).padStart(2,'0')));
+ assert.equal(data.intro.length,2);assert.equal(data.accepted.length,11);
  for(const s of data.sections){assert.ok(s.nav);assert.ok(s.title);assert.ok(s.questions.length);}
  for(const q of list){assert.equal(q.code,q.id);assert.ok(q.title);assert.ok(q.question.endsWith('?'),q.id);assert.ok(q.details.length,q.id);
   for(const d of q.details){assert.ok(d.label);assert.ok(d.text?d.text.length>10:d.items.length>=3,q.id);}
@@ -19,7 +19,9 @@ test('round 2 full edition: 36 unique questions R01-R36 in eight sections with i
  assert.ok(!/isreg|\\\\/.test(all));assert.ok(!/ФИО/.test(JSON.stringify(data.sections).replace('ФИО в этой форме не указывайте','')));assert.ok(!all.includes('A-04'));
  assert.equal(C.key,'hr-portal-survey:draft:v3');
  // Первый раздел — что на главной, а что в разделе (главная и раздел не дублируют друг друга).
- assert.equal(data.sections[0].nav,'Главная и раздел');assert.ok(JSON.stringify(data.sections[0]).includes('дважды'));assert.ok(!C.key.includes('survey-draft-v3'));
+ assert.equal(data.sections[0].nav,'Главная и раздел');assert.ok(JSON.stringify(data.sections[0]).includes('дважды'));
+ // Раздел 9 — вопросы по макетам УРП от ноября; R36 больше не предлагает ждать предложений.
+ assert.equal(data.sections[8].nav,'Заявления и график');assert.ok(!JSON.stringify(data.sections[7]).includes('Ждать ваших предложений'));assert.ok(!C.key.includes('survey-draft-v3'));
 });
 test('a short round 2 draft (v2, other meanings of R01-R18) is not read by the full edition',()=>{
  assert.notEqual(C.key,'hr-portal-survey:draft:v2');
