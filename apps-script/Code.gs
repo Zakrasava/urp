@@ -1,9 +1,9 @@
-// Independent receiver for the HR (URP) survey, round 2 (full edition, R01-R36). Never uses the training survey sheet.
-// Round 1 (K01-K23) and the short round 2 edition (R01-R18) are closed: their sheets are never opened or changed.
+// Independent receiver for the HR (URP) survey, round 2 (full edition, R01-R41). Never uses the training survey sheet.
+// Round 1 (K01-K23), the short edition (R01-R18) and the 36-question edition are closed: their sheets are never opened or changed.
 var HR_SERVICE = 'hr-portal-survey';
 var HR_SHEET_ID = '1PRnjDo_LXdpiYtTd0OvUgVUMe2aDYyPb_MW5mr_gVyc';
-var HR_SHEET_NAME = 'Ответы УРП — круг 2, полная редакция';
-var HR_QUESTION_IDS = Array.from({length: 36}, function (_, i) { return 'R' + ('0' + (i + 1)).slice(-2); });
+var HR_SHEET_NAME = 'Ответы УРП — круг 2, R01–R41';
+var HR_QUESTION_IDS = Array.from({length: 41}, function (_, i) { return 'R' + ('0' + (i + 1)).slice(-2); });
 var HR_STATUS_LABELS = {ready: 'Решение известно', pending: 'Нужно уточнить', delegate: 'Другое подразделение'};
 var HR_HEADERS = ['ID ответа', 'Получено (UTC)', 'Версия формы', 'Подразделение', 'Должность / роль', 'Рабочий контакт'];
 HR_QUESTION_IDS.forEach(function (id) {
@@ -12,7 +12,7 @@ HR_QUESTION_IDS.forEach(function (id) {
 HR_HEADERS.push('Дополнительные замечания', 'Контрольная сумма');
 
 function doGet() {
-  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-11-06.1'});
+  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-11-06.2'});
 }
 
 function doPost(e) {
