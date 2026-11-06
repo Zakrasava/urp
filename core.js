@@ -5,8 +5,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
   var statuses = { ready: "Решение известно", pending: "Нужно уточнить", delegate: "Другое подразделение" };
-  var key = "hr-portal-survey:draft:v2";
-  var maxPayloadLength = 350000;
+  var key = "hr-portal-survey:draft:v3";
+  var maxPayloadLength = 700000;
   function knownStatus(value) { return typeof value === "string" && Object.prototype.hasOwnProperty.call(statuses, value); }
   function str(value) { return typeof value === "string" ? value.trim() : ""; }
   function questions(data) { return data.sections.reduce(function (all, s) { return all.concat(s.questions); }, []); }

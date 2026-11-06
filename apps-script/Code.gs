@@ -1,9 +1,9 @@
-// Independent receiver for the HR (URP) survey, round 2. Never uses the training survey sheet.
-// Round 1 (K01-K23) is closed: its sheet is never opened or changed; round 2 writes to its own sheet.
+// Independent receiver for the HR (URP) survey, round 2 (full edition, R01-R36). Never uses the training survey sheet.
+// Round 1 (K01-K23) and the short round 2 edition (R01-R18) are closed: their sheets are never opened or changed.
 var HR_SERVICE = 'hr-portal-survey';
 var HR_SHEET_ID = '1PRnjDo_LXdpiYtTd0OvUgVUMe2aDYyPb_MW5mr_gVyc';
-var HR_SHEET_NAME = 'Ответы УРП — круг 2';
-var HR_QUESTION_IDS = Array.from({length: 18}, function (_, i) { return 'R' + ('0' + (i + 1)).slice(-2); });
+var HR_SHEET_NAME = 'Ответы УРП — круг 2, полная редакция';
+var HR_QUESTION_IDS = Array.from({length: 36}, function (_, i) { return 'R' + ('0' + (i + 1)).slice(-2); });
 var HR_STATUS_LABELS = {ready: 'Решение известно', pending: 'Нужно уточнить', delegate: 'Другое подразделение'};
 var HR_HEADERS = ['ID ответа', 'Получено (UTC)', 'Версия формы', 'Подразделение', 'Должность / роль', 'Рабочий контакт'];
 HR_QUESTION_IDS.forEach(function (id) {
@@ -12,13 +12,13 @@ HR_QUESTION_IDS.forEach(function (id) {
 HR_HEADERS.push('Дополнительные замечания', 'Контрольная сумма');
 
 function doGet() {
-  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-10-28.1'});
+  return hrJson_({ok: true, service: HR_SERVICE, version: '2026-11-06.1'});
 }
 
 function doPost(e) {
   var lock;
   try {
-    if (!e || !e.postData || typeof e.postData.contents !== 'string' || e.postData.contents.length > 350000) return hrError_('BAD_REQUEST');
+    if (!e || !e.postData || typeof e.postData.contents !== 'string' || e.postData.contents.length > 700000) return hrError_('BAD_REQUEST');
     var data;
     try { data = hrValidate_(JSON.parse(e.postData.contents)); } catch (_) { return hrError_('BAD_REQUEST'); }
     // Client release metadata must not turn an unchanged retry into a conflict.
